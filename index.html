@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Neon Game Predictor</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #000;
+      color: #39FF14;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 10px;
+    }
+
+    #container {
+      background: #111;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 20px #39FF14;
+      text-align: center;
+      width: 90%;
+      max-width: 600px;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 28px;
+      color: #39FF14;
+      text-shadow: 0 0 5px #39FF14;
+    }
+
+    label {
+      font-size: 20px;
+      display: block;
+      margin: 20px 0 10px;
+    }
+
+    select {
+      padding: 12px;
+      width: 80%;
+      max-width: 400px;
+      background: #000;
+      color: #39FF14;
+      border: 2px solid #39FF14;
+      border-radius: 10px;
+      font-size: 18px;
+      text-align: center;
+      appearance: none;
+      outline: none;
+    }
+
+    .info {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      text-shadow: 0 0 5px #39FF14;
+    }
+
+    #prediction {
+      font-size: 48px;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #39FF14;
+      text-shadow: 0 0 8px #39FF14;
+    }
+
+    iframe {
+      width: 80%;
+      height: 100px;
+      border: 2px solid #39FF14;
+      border-radius: 15px;
+      box-shadow: 0 0 15px #39FF14;
+    }
+
+    @media screen and (max-width: 600px) {
+      iframe {
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="container">
+    <h1>Kb Number Predictor</h1>
+
+    <!-- Game Selection -->
+    <label for="gameSelect">Select Game:</label>
+    <select id="gameSelect">
+      <option value="Jalva">Jalva</option>
+      <option value="91Club">91Club</option>
+      <option value="Tiranga">Tiranga</option>
+      <option value="Daman">Daman</option>
+    </select>
+
+    <div class="info">Current Game: <span id="gameName">Jalva</span></div>
+    <div class="info">Current Period: <span id="period">—</span></div>
+    <div class="info">Next period in: <span id="timer">—</span> seconds</div>
+    <div class="info">Prediction:</div>
+    <div id="prediction">—</div>
+  </div>
+
+  <!-- WebView (iframe) Section -->
+  <iframe id="webview" src="https://damanofficial.top/#/" title="Game WebView"></iframe>
+
+  <script>
+    function generatePeriod() {
+      const now = new Date();
+      const totalMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+      return now.getUTCFullYear() * 100000 + 10001 + totalMinutes;
+    }
+
+    function generatePrediction() {
+      return Math.floor(Math.random() * 10); // Single number between 0-9
+    }
+
+    let currentPeriod = generatePeriod();
+    let currentPrediction = generatePrediction();
+
+    function updateUI() {
+      const now = new Date();
+      const seconds = now.getUTCSeconds();
+      const remain = 60 - seconds;
+      const newPeriod = generatePeriod();
+
+      document.getElementById("timer").textContent = remain;
+      document.getElementById("period").textContent = currentPeriod;
+
+      if (newPeriod !== currentPeriod) {
+        currentPeriod = newPeriod;
+        autoPredict();
+      }
+    }
+
+    function autoPredict() {
+      currentPrediction = generatePrediction();
+      document.getElementById("prediction").textContent = currentPrediction;
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      // Initial load
+      document.getElementById("period").textContent = currentPeriod;
+      document.getElementById("prediction").textContent = currentPrediction;
+
+      // Game selection handler
+      const gameSelect = document.getElementById("gameSelect");
+      const gameName = document.getElementById("gameName");
+      const webview = document.getElementById("webview");
+
+      gameSelect.addEventListener("change", () => {
+        gameName.textContent = gameSelect.value;
+        autoPredict();
+
+// You can customize different URLs per game if you like
+        // Example:
+        // if (gameSelect.value === "Jalva") webview.src = "https://jalva.com";
+      });
+
+      // Start interval loop
+      setInterval(updateUI, 1000);
+    });
+  </script>
+</body>
+</html>
